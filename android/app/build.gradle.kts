@@ -8,6 +8,10 @@ plugins {
     id("com.google.firebase.crashlytics")
 }
 
+tasks.matching { it.name == "uploadCrashlyticsMappingFileRelease" }.configureEach {
+    enabled = false
+}
+
 val localProperties = Properties().apply {
     val localPropertiesFile = rootProject.file("local.properties")
     if (localPropertiesFile.exists()) {
