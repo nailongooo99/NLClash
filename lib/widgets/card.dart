@@ -302,7 +302,7 @@ class CommonCard extends StatelessWidget {
       blurSigma: 0,
       tint: Theme.of(context).colorScheme.onSurface,
       tintOpacity: Theme.of(context).brightness == Brightness.dark ? 0.08 : 0.03,
-      highlightIntensity: 0.3,
+      highlight: const LiquidHighlightSpec(alpha: 0.35),
       innerShadowRadius: 4,
       innerShadowIntensity: 0.1,
       child: card,

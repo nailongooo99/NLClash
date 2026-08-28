@@ -7,3 +7,4 @@ export 'liquid_navigation_bar.dart';
 export 'liquid_slider.dart';
 export 'liquid_switch.dart';
 export 'liquid_wallpaper.dart';
+export 'liquid_shaders.dart';

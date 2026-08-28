@@ -1,5 +1,5 @@
-import 'package:fl_clash/widgets/liquid/liquid_glass.dart';
 import 'package:fl_clash/widgets/liquid/liquid_drag.dart';
+import 'package:fl_clash/widgets/liquid/liquid_glass.dart';
 import 'package:fl_clash/widgets/liquid/liquid_highlight.dart';
 import 'package:flutter/material.dart';
 
@@ -56,9 +56,6 @@ class _LiquidButtonState extends State<LiquidButton>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final tint = widget.tint ??
-        (isDark ? Colors.white : Colors.white);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTapDown: widget.onPressed == null ? null : _handleTapDown,
@@ -73,7 +70,7 @@ class _LiquidButtonState extends State<LiquidButton>
             builder: (context, constraints) {
               final size = Size(constraints.maxWidth, constraints.maxHeight);
               final maxOffset = size.shortestSide;
-              final scale = 1 + 4 / size.height * progress;
+              final scale = 1 + 4 / widget.height * progress;
               final tx = maxOffset * liquidTanh(0.05 * offset.dx / maxOffset);
               final ty = maxOffset * liquidTanh(0.05 * offset.dy / maxOffset);
               return Transform(
@@ -83,13 +80,17 @@ class _LiquidButtonState extends State<LiquidButton>
                 alignment: Alignment.center,
                 child: LiquidGlass(
                   shape: const StadiumBorder(),
+                  borderRadius: BorderRadius.circular(widget.height / 2),
                   blurSigma: 2,
-                  tint: tint,
-                  tintOpacity: 0.3,
+                  lensHeight: 12,
+                  lensAmount: 24,
+                  saturation: 1.5,
+                  tint: Colors.white,
+                  tintOpacity: 0.06,
+                  highlight: null,
                   enableInnerShadow: false,
-                  lensScale: 1 + progress * 0.035,
-                  lensFocal: _highlight.position,
                   child: Stack(
+                    fit: StackFit.expand,
                     children: [
                       Positioned.fill(
                         child: CustomPaint(

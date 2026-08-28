@@ -32,6 +32,7 @@ class _LiquidSliderState extends State<LiquidSlider>
   static const double _thumbDiameter = 24;
 
   late final LiquidDragController _controller;
+  double _trackWidth = 0;
 
   @override
   void initState() {
@@ -84,8 +85,6 @@ class _LiquidSliderState extends State<LiquidSlider>
     _controller.animateToValue(target);
     widget.onChanged?.call(target);
   }
-
-  double _trackWidth = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -165,13 +164,24 @@ class _LiquidSliderState extends State<LiquidSlider>
                         scaleY: scaleY,
                         child: LiquidGlass(
                           shape: const StadiumBorder(),
+                          borderRadius: BorderRadius.circular(
+                            _thumbDiameter / 2,
+                          ),
                           blurSigma: 8 * (1 - pressProgress),
+                          lensHeight: 10 * pressProgress,
+                          lensAmount: 14 * pressProgress,
+                          chromaticAberration: true,
                           tint: Colors.white,
                           tintOpacity: 1 - pressProgress,
-                          enableHighlight: false,
+                          highlight: LiquidHighlightSpec.ambient(
+                            width: 0.5 / 1.5,
+                            blurRadius: 0.25 / 1.5,
+                            alpha: pressProgress,
+                          ),
                           enableInnerShadow: pressProgress > 0,
                           innerShadowRadius: 4 * pressProgress,
-                          innerShadowIntensity: 0.12 * pressProgress,
+                          innerShadowIntensity: 0.15 * pressProgress,
+                          innerShadowOffset: Offset(0, 4 * pressProgress),
                           shadows: const [
                             BoxShadow(
                               color: Color(0x0D000000),
@@ -179,7 +189,6 @@ class _LiquidSliderState extends State<LiquidSlider>
                               offset: Offset(0, 1),
                             ),
                           ],
-                          lensScale: 1 + pressProgress * 0.06,
                           child: const SizedBox(),
                         ),
                       ),

@@ -134,14 +134,11 @@ class _LiquidSwitchState extends State<LiquidSwitch>
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: LiquidGlass(
-                    shape: const StadiumBorder(),
-                    blurSigma: 1,
-                    tint: trackColor,
-                    tintOpacity: 0.85,
-                    enableHighlight: false,
-                    enableInnerShadow: false,
-                    child: const SizedBox(),
+                  child: ClipPath(
+                    clipper: const ShapeBorderClipper(
+                      shape: StadiumBorder(),
+                    ),
+                    child: ColoredBox(color: trackColor),
                   ),
                 ),
                 Positioned(
@@ -154,13 +151,22 @@ class _LiquidSwitchState extends State<LiquidSwitch>
                     scaleY: scaleY,
                     child: LiquidGlass(
                       shape: const StadiumBorder(),
+                      borderRadius: BorderRadius.circular(_thumbDiameter / 2),
                       blurSigma: 8 * (1 - progress),
+                      lensHeight: 5 * progress,
+                      lensAmount: 10 * progress,
+                      chromaticAberration: true,
                       tint: Colors.white,
                       tintOpacity: 1 - progress,
-                      enableHighlight: false,
+                      highlight: LiquidHighlightSpec.ambient(
+                        width: 0.5 / 1.5,
+                        blurRadius: 0.25 / 1.5,
+                        alpha: progress,
+                      ),
                       enableInnerShadow: progress > 0,
                       innerShadowRadius: 4 * progress,
-                      innerShadowIntensity: 0.12 * progress,
+                      innerShadowIntensity: 0.15 * progress,
+                      innerShadowOffset: Offset(0, 4 * progress),
                       shadows: const [
                         BoxShadow(
                           color: Color(0x0D000000),
@@ -168,7 +174,6 @@ class _LiquidSwitchState extends State<LiquidSwitch>
                           offset: Offset(0, 1),
                         ),
                       ],
-                      lensScale: 1 + progress * 0.05,
                       child: const SizedBox(),
                     ),
                   ),

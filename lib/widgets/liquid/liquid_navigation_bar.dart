@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:fl_clash/widgets/liquid/liquid_drag.dart';
 import 'package:fl_clash/widgets/liquid/liquid_glass.dart';
 import 'package:fl_clash/widgets/liquid/liquid_highlight.dart';
@@ -29,6 +31,7 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
   late final LiquidHighlightController _highlight;
   late final AnimationController _panelOffsetController;
   double _barWidth = 0;
+  double _lastDragX = 0;
 
   @override
   void initState() {
@@ -36,7 +39,10 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
     _controller = LiquidDragController(
       vsync: this,
       initialValue: widget.selectedIndex.toDouble(),
-      valueRange: LiquidValueRange(0, (widget.destinations.length - 1).toDouble()),
+      valueRange: LiquidValueRange(
+        0,
+        (widget.destinations.length - 1).toDouble(),
+      ),
       pressedScale: 78 / 56,
     );
     _highlight = LiquidHighlightController(vsync: this);
@@ -68,6 +74,12 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
     return (_barWidth - widget.padding * 2) / count;
   }
 
+  double get _panelOffset {
+    final width = math.max(_barWidth, 1);
+    final fraction = (_panelOffsetController.value / width).clamp(-1.0, 1.0);
+    return 4 * fraction.sign * Curves.easeOutCubic.transform(fraction.abs());
+  }
+
   void _handleDragStart(DragStartDetails details) {
     _highlight.onDown(details.localPosition);
     _controller.press();
@@ -75,7 +87,8 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
 
   void _handleDragUpdate(DragUpdateDetails details) {
     final dx = details.delta.dx;
-    _highlight.onMove(details.localPosition);
+    _lastDragX = details.localPosition.dx;
+    _highlight.onMove(Offset(_lastDragX, 0));
     _controller.updateValue(
       (_controller.value + dx / _tabWidth)
           .clamp(0, (widget.destinations.length - 1).toDouble())
@@ -111,7 +124,7 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accent = isDark ? const Color(0xFF0091FF) : const Color(0xFF0088FF);
     final containerColor = isDark
-        ? const Color(0xFF121212).withValues(alpha: 0.42)
+        ? const Color(0xFF121212).withValues(alpha: 0.4)
         : const Color(0xFFFAFAFA).withValues(alpha: 0.4);
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -122,53 +135,85 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
           builder: (context, _) {
             final progress = _controller.pressProgress;
             final velocity = _controller.velocity;
-            final pillX =
-                (widget.padding + _controller.value * tabWidth + _panelOffsetController.value)
-                    .clamp(
-                      -tabWidth * 0.25,
-                      _barWidth - tabWidth * 0.75,
-                    )
-                    .toDouble();
+            final panelOffset = _panelOffset;
+            final pillX = (widget.padding + _controller.value * tabWidth +
+                    panelOffset)
+                .clamp(-tabWidth * 0.25, _barWidth - tabWidth * 0.75)
+                .toDouble();
             final scaleX =
                 _controller.scaleX /
                 (1 - (velocity * 0.75).clamp(-0.2, 0.2).toDouble());
             final scaleY =
                 _controller.scaleY *
                 (1 - (velocity * 0.25).clamp(-0.2, 0.2).toDouble());
-            final selectedContent =
-                widget.destinations[widget.selectedIndex
-                    .clamp(0, widget.destinations.length - 1)
-                    .toInt()];
+            final containerScale = 1 + 16 / math.max(_barWidth, 1) * progress;
+            final selectedIndex = widget.selectedIndex.clamp(
+              0,
+              widget.destinations.length - 1,
+            );
+            final highlightPosition = Offset(
+              (_controller.value + 0.5) * tabWidth + panelOffset,
+              widget.height / 2,
+            );
             return SizedBox(
               height: widget.height,
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: LiquidGlass(
-                      shape: const StadiumBorder(),
-                      blurSigma: 8,
-                      tint: containerColor,
-                      tintOpacity: 1,
-                      enableHighlight: false,
-                      enableInnerShadow: false,
-                      child: Row(
-                        children: [
-                          for (var index = 0; index < widget.destinations.length; index++)
-                            Expanded(
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  if (index != widget.selectedIndex) {
-                                    widget.onDestinationSelected(index);
-                                  }
-                                },
-                                child: SizedBox(
-                                  height: widget.height - widget.padding * 2,
-                                  child: widget.destinations[index],
+                    child: Transform.scale(
+                      scale: containerScale,
+                      child: LiquidGlass(
+                        shape: const StadiumBorder(),
+                        borderRadius: BorderRadius.circular(widget.height / 2),
+                        blurSigma: 8,
+                        lensHeight: 24,
+                        lensAmount: 24,
+                        saturation: 1.5,
+                        tint: containerColor,
+                        tintOpacity: 1,
+                        highlight: null,
+                        enableInnerShadow: false,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: CustomPaint(
+                                  painter: LiquidHighlightPainter(
+                                    progress: progress,
+                                    position: highlightPosition,
+                                    color: Colors.white,
+                                    intensity: 0.15,
+                                  ),
                                 ),
                               ),
                             ),
-                        ],
+                            Row(
+                              children: [
+                                for (
+                                  var index = 0;
+                                  index < widget.destinations.length;
+                                  index++
+                                )
+                                  Expanded(
+                                    child: GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () {
+                                        if (index != widget.selectedIndex) {
+                                          widget.onDestinationSelected(index);
+                                        }
+                                      },
+                                      child: SizedBox(
+                                        height:
+                                            widget.height - widget.padding * 2,
+                                        child: widget.destinations[index],
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -188,20 +233,32 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
                         scaleY: scaleY,
                         child: LiquidGlass(
                           shape: const StadiumBorder(),
+                          borderRadius: BorderRadius.circular(
+                            widget.height / 2,
+                          ),
                           blurSigma: 8 * (1 - progress),
-                          tint: Colors.white,
-                          tintOpacity: 0.1,
-                          enableHighlight: false,
+                          lensHeight: 10 * progress,
+                          lensAmount: 14 * progress,
+                          chromaticAberration: true,
+                          tint: isDark
+                              ? const Color(0x1AFFFFFF)
+                              : const Color(0x1A000000),
+                          tintOpacity: 1 - progress,
+                          highlight: LiquidHighlightSpec(
+                            alpha: progress,
+                          ),
                           enableInnerShadow: progress > 0,
                           innerShadowRadius: 8 * progress,
-                          innerShadowIntensity: 0.1 * progress,
-                          lensScale: 1 + progress * 0.06,
+                          innerShadowIntensity: 0.15 * progress,
+                          innerShadowOffset: Offset(0, 8 * progress),
                           shadows: [
                             if (progress > 0)
-                              const BoxShadow(
-                                color: Color(0x1A000000),
-                                blurRadius: 8,
-                                offset: Offset(0, 2),
+                              BoxShadow(
+                                color: const Color(0x1A000000).withValues(
+                                  alpha: progress,
+                                ),
+                                blurRadius: 24,
+                                offset: const Offset(0, 4),
                               ),
                           ],
                           child: Stack(
@@ -213,18 +270,13 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
                                     accent,
                                     BlendMode.srcIn,
                                   ),
-                                  child: selectedContent,
+                                  child: widget.destinations[selectedIndex],
                                 ),
                               ),
                               Positioned.fill(
-                                child: IgnorePointer(
-                                  child: CustomPaint(
-                                    painter: LiquidHighlightPainter(
-                                      progress: progress,
-                                      position: _highlight.position,
-                                      color: Colors.white,
-                                      intensity: 0.1,
-                                    ),
+                                child: ColoredBox(
+                                  color: const Color(0x08000000).withValues(
+                                    alpha: progress,
                                   ),
                                 ),
                               ),

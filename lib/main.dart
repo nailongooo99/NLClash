@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'application.dart';
 import 'common/common.dart';
+import 'widgets/liquid/liquid_shaders.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +16,7 @@ Future<void> main() async {
     final version = await system.init();
     final container = await globalState.init(version);
     HttpOverrides.global = FlClashHttpOverrides();
+    LiquidShaders.instance.ensureLoaded();
     runApp(
       UncontrolledProviderScope(
         container: container,
