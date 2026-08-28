@@ -3,6 +3,7 @@ import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/inherited.dart';
+import 'package:fl_clash/widgets/liquid/liquid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -61,7 +62,7 @@ Future<T?> showSheet<T>({
           child: builder(context),
         );
       },
-      backgroundColor: props.backgroundColor,
+      backgroundColor: Colors.transparent,
       showDragHandle: false,
       useSafeArea: props.useSafeArea,
     ),
@@ -168,8 +169,8 @@ class _AdaptiveSheetScaffoldState extends State<AdaptiveSheetScaffold> {
     final ModalRoute<dynamic>? route = ModalRoute.of(context);
     final type = sheetProvider?.type ?? SheetType.page;
     final backgroundColor = type == SheetType.bottomSheet
-        ? context.colorScheme.surfaceContainerLow
-        : context.colorScheme.surface;
+        ? context.colorScheme.surfaceContainerLow.withValues(alpha: 0.62)
+        : context.colorScheme.surface.withValues(alpha: 0.62);
     final useCloseIcon =
         type != SheetType.page &&
         (nestedNavigatorPop != null && route?.impliesAppBarDismissal == false ||
@@ -219,7 +220,9 @@ class _AdaptiveSheetScaffoldState extends State<AdaptiveSheetScaffold> {
 
     final suffixPop = type != SheetType.page && actions.isEmpty && useCloseIcon;
     final appBar = AppBar(
-      backgroundColor: backgroundColor,
+      backgroundColor: type == SheetType.bottomSheet
+          ? Colors.transparent
+          : backgroundColor,
       forceMaterialTransparency: type == SheetType.bottomSheet ? true : false,
       leading: suffixPop ? null : popButton,
       automaticallyImplyLeading: type == SheetType.page ? true : false,
@@ -257,8 +260,15 @@ class _AdaptiveSheetScaffoldState extends State<AdaptiveSheetScaffold> {
           const SizedBox(height: 6),
         ],
       );
-      return ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      return LiquidGlass(
+        shape: const RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(28),
+          ),
+        ),
+        blurSigma: 12,
+        tint: backgroundColor,
+        tintOpacity: 1,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

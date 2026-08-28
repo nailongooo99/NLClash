@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/l10n/l10n.dart';
-import 'package:fl_clash/manager/hotkey_manager.dart';
 import 'package:fl_clash/manager/manager.dart';
 import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
@@ -41,6 +40,38 @@ class ApplicationState extends ConsumerState<Application> {
     int? primaryColor,
   }) {
     return ref.read(genColorSchemeProvider(brightness));
+  }
+
+  ThemeData _buildTheme({
+    required Brightness brightness,
+    required int? primaryColor,
+    bool pureBlack = false,
+  }) {
+    final colorScheme = _getAppColorScheme(
+      brightness: brightness,
+      primaryColor: primaryColor,
+    );
+    final isDark = brightness == Brightness.dark;
+    return ThemeData(
+      useMaterial3: true,
+      scaffoldBackgroundColor: Colors.transparent,
+      canvasColor: Colors.transparent,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: Colors.white.withValues(alpha: isDark ? 0.14 : 0.42),
+        foregroundColor: colorScheme.onPrimaryContainer,
+        elevation: 3,
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
+      ),
+      pageTransitionsTheme: _pageTransitionsTheme,
+      colorScheme: pureBlack ? colorScheme.toPureBlack(true) : colorScheme,
+    );
   }
 
   @override
@@ -91,13 +122,6 @@ class ApplicationState extends ConsumerState<Application> {
   }
 
   Widget _buildPlatformState({required Widget child}) {
-    if (system.isDesktop) {
-      return WindowManager(
-        child: TrayManager(
-          child: HotKeyManager(child: ProxyManager(child: child)),
-        ),
-      );
-    }
     return AndroidManager(child: TileManager(child: child));
   }
 
@@ -121,9 +145,6 @@ class ApplicationState extends ConsumerState<Application> {
   }
 
   Widget _buildPlatformApp({required Widget child}) {
-    if (system.isDesktop) {
-      return WindowHeaderContainer(child: child);
-    }
     return VpnManager(child: child);
   }
 
@@ -163,21 +184,14 @@ class ApplicationState extends ConsumerState<Application> {
           locale: utils.getLocaleForString(locale),
           supportedLocales: AppLocalizations.delegate.supportedLocales,
           themeMode: themeProps.themeMode,
-          theme: ThemeData(
-            useMaterial3: true,
-            pageTransitionsTheme: _pageTransitionsTheme,
-            colorScheme: _getAppColorScheme(
-              brightness: Brightness.light,
-              primaryColor: themeProps.primaryColor,
-            ),
+          theme: _buildTheme(
+            brightness: Brightness.light,
+            primaryColor: themeProps.primaryColor,
           ),
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            pageTransitionsTheme: _pageTransitionsTheme,
-            colorScheme: _getAppColorScheme(
-              brightness: Brightness.dark,
-              primaryColor: themeProps.primaryColor,
-            ).toPureBlack(themeProps.pureBlack),
+          darkTheme: _buildTheme(
+            brightness: Brightness.dark,
+            primaryColor: themeProps.primaryColor,
+            pureBlack: themeProps.pureBlack,
           ),
           home: child!,
         );

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/manager/window_manager.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/animated_visibility.dart';
@@ -59,18 +58,6 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
         });
       }
     });
-    if (system.isMacOS) {
-      ref.listenManual(autoSetSystemDnsStateProvider, (prev, next) async {
-        if (prev == next) {
-          return;
-        }
-        if (next.a == true && next.b == true) {
-          macOS?.updateDns(false);
-        } else {
-          macOS?.updateDns(true);
-        }
-      });
-    }
   }
 
   @override
@@ -135,6 +122,27 @@ class AppEnvManager extends StatelessWidget {
   }
 }
 
+class AppIcon extends StatelessWidget {
+  const AppIcon({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: ShapeDecoration(
+        color: context.colorScheme.surfaceContainerHighest,
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: Transform.translate(
+        offset: const Offset(0, -1),
+        child: Image.asset('assets/images/icon.png', width: 34, height: 34),
+      ),
+    );
+  }
+}
+
 class AppSidebarContainer extends ConsumerWidget {
   final Widget child;
 
@@ -192,12 +200,9 @@ class AppSidebarContainer extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (system.isMacOS) const SizedBox(height: 22),
                     const SizedBox(height: 10),
-                    if (!system.isMacOS) ...[
-                      const ClipRect(child: AppIcon()),
-                      const SizedBox(height: 12),
-                    ],
+                    const ClipRect(child: AppIcon()),
+                    const SizedBox(height: 12),
                     Expanded(
                       child: ScrollConfiguration(
                         behavior: HiddenBarScrollBehavior(),

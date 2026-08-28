@@ -183,7 +183,7 @@ class RuleStatusItem extends StatelessWidget {
           style: context.textTheme.bodyMedium?.toJetBrainsMono,
         ),
       ),
-      trailing: Switch(value: status, onChanged: onChange),
+      trailing: LiquidSwitch(value: status, onChanged: onChange),
       onPressed: () {
         onChange(!status);
       },

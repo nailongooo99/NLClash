@@ -632,7 +632,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
     final appLocalizations = context.appLocalizations;
     return _buildItem(
       title: Text(appLocalizations.noResolveHostname),
-      trailing: Switch(value: noResolve ?? false, onChanged: (_) {}),
+      trailing: LiquidSwitch(value: noResolve ?? false, onChanged: (_) {}),
     );
   }
 
@@ -640,7 +640,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
     final appLocalizations = context.appLocalizations;
     return _buildItem(
       title: Text(appLocalizations.matchSourceIp),
-      trailing: Switch(value: src ?? false, onChanged: (_) {}),
+      trailing: LiquidSwitch(value: src ?? false, onChanged: (_) {}),
     );
   }
 

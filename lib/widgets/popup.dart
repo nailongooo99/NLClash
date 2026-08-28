@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/common.dart';
+import 'package:fl_clash/widgets/liquid/liquid.dart';
 import 'package:flutter/material.dart';
 
 import 'animated_cross_slide.dart';
@@ -210,11 +211,22 @@ class CommonPopupMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 12,
-      color: context.colorScheme.surfaceContainer,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.circular(14)),
+    return LiquidGlass(
+      shape: RoundedSuperellipseBorder(
+        borderRadius: BorderRadius.circular(14),
+      ),
+      fit: StackFit.passthrough,
+      blurSigma: 14,
+      tint: context.colorScheme.surfaceContainerLow,
+      tintOpacity: 0.85,
+      innerShadowIntensity: 0.1,
+      shadows: const [
+        BoxShadow(
+          color: Color(0x26000000),
+          blurRadius: 16,
+          offset: Offset(0, 4),
+        ),
+      ],
       child: IntrinsicWidth(
         child: _CommonPopupMenuItems(
           items: items,

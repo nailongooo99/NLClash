@@ -1,4 +1,5 @@
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/widgets/liquid/liquid.dart';
 import 'package:flutter/material.dart';
 
 class CommonChip extends StatelessWidget {
@@ -19,25 +20,12 @@ class CommonChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (type == ChipType.delete) {
-      return Chip(
-        avatar: avatar,
-        labelPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-        clipBehavior: Clip.antiAlias,
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        onDeleted: onPressed ?? () {},
-        labelStyle: labelStyle,
-        label: Text(label),
-      );
-    }
-    return ActionChip(
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    return LiquidChip(
+      label: label,
       avatar: avatar,
-      clipBehavior: Clip.antiAlias,
-      labelPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-      onPressed: onPressed ?? () {},
       labelStyle: labelStyle,
-      label: Text(label),
+      onPressed: onPressed,
+      onDeleted: type == ChipType.delete ? onPressed ?? () {} : null,
     );
   }
 }

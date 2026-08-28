@@ -44,11 +44,11 @@ void main() {
       ),
     );
 
-    final tile = tester.widget<ListTile>(find.byType(ListTile));
-    final control = tester.widget<Switch>(find.byType(Switch));
+      final tile = tester.widget<ListTile>(find.byType(ListTile));
+      final control = tester.widget<LiquidSwitch>(find.byType(LiquidSwitch));
 
-    expect(tile.onTap, isNull);
-    expect(control.onChanged, isNull);
+      expect(tile.onTap, isNull);
+      expect(control.onChanged, isNull);
 
     await tester.tap(find.text('Disabled'));
     await tester.pump();

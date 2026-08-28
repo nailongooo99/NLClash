@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 object GlobalState : CoroutineScope by CoroutineScope(SupervisorJob() + Dispatchers.Default) {
-    const val NOTIFICATION_CHANNEL = "FlClash"
+    const val NOTIFICATION_CHANNEL = "NLClash"
     const val NOTIFICATION_ID = 1
 
     val packageName: String
@@ -29,7 +29,7 @@ object GlobalState : CoroutineScope by CoroutineScope(SupervisorJob() + Dispatch
     }
 
     fun log(text: String) {
-        Log.d("FlClash", text)
+        Log.d("NLClash", text)
     }
 
     fun setCrashlytics(enable: Boolean) {

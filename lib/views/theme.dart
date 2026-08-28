@@ -493,23 +493,19 @@ class _TextScaleFactorItem extends ConsumerWidget {
                     status: !textScale.enable,
                     child: ActivateBox(
                       active: textScale.enable,
-                      child: SliderTheme(
-                        data: SliderDefaultsM3(context),
-                        child: Slider(
-                          padding: EdgeInsets.zero,
-                          min: minTextScale,
-                          max: maxTextScale,
-                          value: textScale.scale,
-                          onChanged: (value) {
-                            ref
-                                .read(themeSettingProvider.notifier)
-                                .update(
-                                  (state) =>
-                                      state.copyWith.textScale(scale: value),
-                                );
-                          },
-                        ),
-                      ),
+                    child: LiquidSlider(
+                      min: minTextScale,
+                      max: maxTextScale,
+                      value: textScale.scale,
+                      onChanged: (value) {
+                        ref
+                            .read(themeSettingProvider.notifier)
+                            .update(
+                              (state) =>
+                                  state.copyWith.textScale(scale: value),
+                            );
+                      },
+                    ),
                     ),
                   ),
                 ),

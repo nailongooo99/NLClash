@@ -67,7 +67,7 @@ class TUNButton extends StatelessWidget {
                       (state) => state.tun.enable,
                     ),
                   );
-                  return Switch(
+                  return LiquidSwitch(
                     value: enable,
                     onChanged: (value) {
                       ref
@@ -137,8 +137,7 @@ class SystemProxyButton extends StatelessWidget {
                   final systemProxy = ref.watch(
                     networkSettingProvider.select((state) => state.systemProxy),
                   );
-                  return Switch(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  return LiquidSwitch(
                     value: systemProxy,
                     onChanged: (value) {
                       ref
@@ -211,7 +210,7 @@ class VpnButton extends StatelessWidget {
                   final enable = ref.watch(
                     vpnSettingProvider.select((state) => state.enable),
                   );
-                  return Switch(
+                  return LiquidSwitch(
                     value: enable,
                     onChanged: (value) {
                       ref

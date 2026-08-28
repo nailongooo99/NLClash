@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/widgets/liquid/liquid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -156,14 +157,14 @@ class CommonCard extends StatelessWidget {
     final colorScheme = context.colorScheme;
     if (type == CommonCardType.filled) {
       if (isSelected) {
-        return colorScheme.secondaryContainer.opacity80;
+        return colorScheme.secondaryContainer.withValues(alpha: 0.55);
       }
-      return colorScheme.surfaceContainerHigh;
+      return colorScheme.surfaceContainerHigh.withValues(alpha: 0.45);
     }
     if (isSelected) {
-      return colorScheme.secondaryContainer;
+      return colorScheme.secondaryContainer.withValues(alpha: 0.55);
     }
-    return colorScheme.surfaceContainerLow;
+    return colorScheme.surfaceContainerLow.withValues(alpha: 0.4);
   }
 
   Color? _buildForegroundColor(BuildContext context) {
@@ -291,9 +292,24 @@ class CommonCard extends StatelessWidget {
             child: button,
           );
 
+    final glassShape =
+        shape ??
+        RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(radius ?? 14),
+        );
+    final glassCard = LiquidGlass(
+      shape: glassShape,
+      blurSigma: 0,
+      tint: Theme.of(context).colorScheme.onSurface,
+      tintOpacity: Theme.of(context).brightness == Brightness.dark ? 0.08 : 0.03,
+      highlightIntensity: 0.3,
+      innerShadowRadius: 4,
+      innerShadowIntensity: 0.1,
+      child: card,
+    );
     return switch (enterAnimated) {
-      true => FadeScaleEnterBox(child: card),
-      false => card,
+      true => FadeScaleEnterBox(child: glassCard),
+      false => glassCard,
     };
   }
 }

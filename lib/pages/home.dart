@@ -1,4 +1,3 @@
-import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/manager/app_manager.dart';
 import 'package:fl_clash/models/common.dart';
@@ -30,107 +29,124 @@ class HomePage extends ConsumerWidget {
     }
     return HomeBackScopeContainer(
       child: AppSidebarContainer(
-        child: Material(
-          color: context.colorScheme.surface,
-          child: Consumer(
-            builder: (context, ref, child) {
-              final state = ref.watch(navigationStateProvider);
-              final isMobile = state.viewMode == ViewMode.mobile;
-              final navigationItems = state.navigationItems;
-              final currentIndex = state.currentIndex;
-              final bottomNavigationBar = NavigationBarTheme(
-                data: _NavigationBarDefaultsM3(context),
-                child: NavigationBar(
-                  destinations: navigationItems
-                      .map(
-                        (e) => NavigationDestination(
-                          icon: e.icon,
-                          label: Intl.message(e.label.name),
+        child: LiquidWallpaper(
+          child: Material(
+            color: Colors.transparent,
+            child: Consumer(
+              builder: (context, ref, child) {
+                final state = ref.watch(navigationStateProvider);
+                final isMobile = state.viewMode == ViewMode.mobile;
+                final navigationItems = state.navigationItems;
+                final currentIndex = state.currentIndex;
+                final bottomNavigationBar = Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+                  child: LiquidNavigationBar(
+                    selectedIndex: currentIndex,
+                    onDestinationSelected: (index) {
+                      _handleToPage(navigationItems[index].label);
+                    },
+                    destinations: navigationItems
+                        .map(
+                          (e) => Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              e.icon,
+                              const SizedBox(height: 2),
+                              Text(
+                                Intl.message(e.label.name),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                  ),
+                );
+                return Column(
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: FocusTraversalGroup(
+                        policy: PageTraversalPolicy(),
+                        child: MediaQuery.removePadding(
+                          removeTop: false,
+                          removeBottom: isMobile,
+                          removeLeft: isMobile,
+                          removeRight: isMobile,
+                          context: context,
+                          child: child!,
                         ),
-                      )
-                      .toList(),
-                  onDestinationSelected: (index) {
-                    _handleToPage(navigationItems[index].label);
-                  },
-                  selectedIndex: currentIndex,
-                ),
-              );
-              return Column(
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: FocusTraversalGroup(
-                      policy: PageTraversalPolicy(),
-                      child: MediaQuery.removePadding(
-                        removeTop: false,
-                        removeBottom: isMobile,
-                        removeLeft: isMobile,
-                        removeRight: isMobile,
-                        context: context,
-                        child: child!,
                       ),
                     ),
-                  ),
-                  AnimatedVisibility.bottomNavigation(
-                    visible: isMobile,
-                    child: MediaQuery.removePadding(
-                      removeTop: true,
-                      removeBottom: false,
-                      removeLeft: true,
-                      removeRight: true,
-                      context: context,
-                      child: bottomNavigationBar,
+                    AnimatedVisibility.bottomNavigation(
+                      visible: isMobile,
+                      child: MediaQuery.removePadding(
+                        removeTop: true,
+                        removeBottom: false,
+                        removeLeft: true,
+                        removeRight: true,
+                        context: context,
+                        child: bottomNavigationBar,
+                      ),
                     ),
-                  ),
-                ],
-              );
-            },
-            child: Consumer(
-              builder: (_, ref, _) {
-                final navigationItems = ref
-                    .watch(currentNavigationItemsStateProvider)
-                    .value;
-                final isMobile = ref.watch(isMobileViewProvider);
-                return _HomePageView(
-                  navigationItems: navigationItems,
-                  pageBuilder: (_, index) {
-                    final navigationItem = navigationItems[index];
-                    final navigationView = navigationItem.builder(context);
-                    final scopedView = PageFocusScope(child: navigationView);
-                    final view = KeepScope(
-                      key: ValueKey(navigationItem.label),
-                      keep: navigationItem.keep,
-                      child: isMobile
-                          ? scopedView
-                          : Navigator(
-                              key: ValueKey(
-                                '${navigationItem.label.name}_navigator',
-                              ),
-                              pages: [MaterialPage(child: scopedView)],
-                              onDidRemovePage: (_) {},
-                            ),
-                    );
-                    return Consumer(
-                      key: ValueKey(navigationItem.label),
-                      builder: (_, ref, child) {
-                        final isActive = ref.watch(
-                          currentPageLabelProvider.select(
-                            (label) => label == navigationItem.label,
-                          ),
-                        );
-                        return PageActivityScope(
-                          isActive: isActive,
-                          child: ExcludeFocus(
-                            excluding: !isActive,
-                            child: child!,
-                          ),
-                        );
-                      },
-                      child: view,
-                    );
-                  },
+                  ],
                 );
               },
+              child: Consumer(
+                builder: (_, ref, _) {
+                  final navigationItems = ref
+                      .watch(currentNavigationItemsStateProvider)
+                      .value;
+                  final isMobile = ref.watch(isMobileViewProvider);
+                  return _HomePageView(
+                    navigationItems: navigationItems,
+                    pageBuilder: (_, index) {
+                      final navigationItem = navigationItems[index];
+                      final navigationView = navigationItem.builder(context);
+                      final scopedView = PageFocusScope(child: navigationView);
+                      final view = KeepScope(
+                        key: ValueKey(navigationItem.label),
+                        keep: navigationItem.keep,
+                        child: isMobile
+                            ? scopedView
+                            : Navigator(
+                                key: ValueKey(
+                                  '${navigationItem.label.name}_navigator',
+                                ),
+                                pages: [MaterialPage(child: scopedView)],
+                                onDidRemovePage: (_) {},
+                              ),
+                      );
+                      return Consumer(
+                        key: ValueKey(navigationItem.label),
+                        builder: (_, ref, child) {
+                          final isActive = ref.watch(
+                            currentPageLabelProvider.select(
+                              (label) => label == navigationItem.label,
+                            ),
+                          );
+                          return PageActivityScope(
+                            isActive: isActive,
+                            child: ExcludeFocus(
+                              excluding: !isActive,
+                              child: child!,
+                            ),
+                          );
+                        },
+                        child: view,
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -238,63 +254,6 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
         return widget.pageBuilder(context, index);
       },
     );
-  }
-}
-
-class _NavigationBarDefaultsM3 extends NavigationBarThemeData {
-  _NavigationBarDefaultsM3(this.context)
-    : super(
-        height: 80.0,
-        elevation: 3.0,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-      );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  @override
-  Color? get backgroundColor => _colors.surfaceContainer;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  WidgetStateProperty<IconThemeData?>? get iconTheme {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      return IconThemeData(
-        size: 24.0,
-        color: states.contains(WidgetState.disabled)
-            ? _colors.onSurfaceVariant.opacity38
-            : states.contains(WidgetState.selected)
-            ? _colors.onSecondaryContainer
-            : _colors.onSurfaceVariant,
-      );
-    });
-  }
-
-  @override
-  Color? get indicatorColor => _colors.secondaryContainer;
-
-  @override
-  ShapeBorder? get indicatorShape => const StadiumBorder();
-
-  @override
-  WidgetStateProperty<TextStyle?>? get labelTextStyle {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      final TextStyle style = _textTheme.labelMedium!;
-      return style.apply(
-        overflow: TextOverflow.ellipsis,
-        color: states.contains(WidgetState.disabled)
-            ? _colors.onSurfaceVariant.opacity38
-            : states.contains(WidgetState.selected)
-            ? _colors.onSurface
-            : _colors.onSurfaceVariant,
-      );
-    });
   }
 }
 

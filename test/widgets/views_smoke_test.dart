@@ -13,7 +13,6 @@ import 'package:fl_clash/views/config/dns.dart';
 import 'package:fl_clash/views/config/general.dart';
 import 'package:fl_clash/views/config/network.dart';
 import 'package:fl_clash/views/config/on_demand.dart';
-import 'package:fl_clash/views/hotkey.dart';
 import 'package:fl_clash/views/profiles/overwrite/custom/groups.dart';
 import 'package:fl_clash/views/profiles/overwrite/custom/proxies.dart';
 import 'package:fl_clash/views/profiles/overwrite/custom/proxy_providers.dart';
@@ -47,7 +46,6 @@ void main() {
     'theme': const ThemeView(),
     'application settings': const ApplicationSettingView(),
     'backup and restore': const BackupAndRestore(),
-    'hotkeys': const HotKeyView(),
     'access control': const AccessView(),
   };
 
