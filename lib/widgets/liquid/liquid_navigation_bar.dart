@@ -171,8 +171,17 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
                         saturation: 1.5,
                         tint: containerColor,
                         tintOpacity: 1,
-                        highlight: null,
+                        highlight: const LiquidHighlightSpec(alpha: 0.5),
                         enableInnerShadow: false,
+                        shadows: [
+                          BoxShadow(
+                            color: Colors.black.withValues(
+                              alpha: isDark ? 0.2 : 0.1,
+                            ),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -240,6 +249,7 @@ class _LiquidNavigationBarState extends State<LiquidNavigationBar>
                           lensHeight: 10 * progress,
                           lensAmount: 14 * progress,
                           chromaticAberration: true,
+                          depthEffect: 1,
                           tint: isDark
                               ? const Color(0x1AFFFFFF)
                               : const Color(0x1A000000),

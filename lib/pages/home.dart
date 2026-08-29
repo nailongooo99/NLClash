@@ -70,31 +70,41 @@ class HomePage extends ConsumerWidget {
                         .toList(),
                   ),
                 );
-                return Column(
+                return Stack(
                   children: [
-                    Flexible(
-                      flex: 1,
+                    Positioned.fill(
                       child: FocusTraversalGroup(
                         policy: PageTraversalPolicy(),
                         child: MediaQuery.removePadding(
                           removeTop: false,
-                          removeBottom: isMobile,
+                          removeBottom: false,
                           removeLeft: isMobile,
                           removeRight: isMobile,
                           context: context,
-                          child: child!,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              bottom: isMobile ? 104 : 0,
+                            ),
+                            child: child!,
+                          ),
                         ),
                       ),
                     ),
-                    AnimatedVisibility.bottomNavigation(
-                      visible: isMobile,
-                      child: MediaQuery.removePadding(
-                        removeTop: true,
-                        removeBottom: false,
-                        removeLeft: true,
-                        removeRight: true,
-                        context: context,
-                        child: bottomNavigationBar,
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: AnimatedVisibility.bottomNavigation(
+                        visible: isMobile,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            12,
+                            4,
+                            12,
+                            MediaQuery.paddingOf(context).bottom + 10,
+                          ),
+                          child: bottomNavigationBar,
+                        ),
                       ),
                     ),
                   ],

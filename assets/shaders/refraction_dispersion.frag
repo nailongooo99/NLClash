@@ -65,7 +65,8 @@ void main() {
   vec2 coord = FlutterFragCoord().xy;
   vec2 halfSize = u_size * 0.5;
   vec2 centeredCoord = (coord + u_offset) - halfSize;
-  float radius = radiusAt(coord, u_cornerRadii);
+  float minDim = min(u_size.x, u_size.y);
+  float radius = radiusAt(coord, u_cornerRadii * minDim);
 
   float sd = sdRoundedRect(centeredCoord, halfSize, radius);
   if (-sd >= u_refractionHeight) {
@@ -74,7 +75,7 @@ void main() {
   }
   sd = min(sd, 0.0);
 
-  float d = circleMap(1.0 - -sd / u_refractionHeight) * u_refractionAmount;
+  float d = circleMap(1.0 - -sd / (u_refractionHeight * minDim)) * u_refractionAmount * minDim;
   float gradRadius = min(radius * 1.5, min(halfSize.x, halfSize.y));
   vec2 grad = gradSdRoundedRect(centeredCoord, halfSize, gradRadius) +
       u_depthEffect * normalize(centeredCoord + vec2(0.0001));

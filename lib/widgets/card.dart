@@ -157,9 +157,9 @@ class CommonCard extends StatelessWidget {
     final colorScheme = context.colorScheme;
     if (type == CommonCardType.filled) {
       if (isSelected) {
-        return colorScheme.secondaryContainer.withValues(alpha: 0.55);
+        return colorScheme.secondaryContainer.withValues(alpha: 0.62);
       }
-      return colorScheme.surfaceContainerHigh.withValues(alpha: 0.45);
+      return colorScheme.secondaryContainer.withValues(alpha: 0.4);
     }
     if (isSelected) {
       return colorScheme.secondaryContainer.withValues(alpha: 0.55);
@@ -226,7 +226,7 @@ class CommonCard extends StatelessWidget {
               shape:
                   shape ??
                   RoundedSuperellipseBorder(
-                    borderRadius: BorderRadius.circular(radius ?? 14),
+                    borderRadius: BorderRadius.circular(radius ?? 22),
                   ),
               iconSize: 20,
               iconColor: _buildIconColor(context),
@@ -253,7 +253,7 @@ class CommonCard extends StatelessWidget {
               shape:
                   shape ??
                   RoundedSuperellipseBorder(
-                    borderRadius: BorderRadius.circular(radius ?? 14),
+                    borderRadius: BorderRadius.circular(radius ?? 22),
                   ),
               iconSize: 20,
               iconColor: _buildIconColor(context),
@@ -295,7 +295,7 @@ class CommonCard extends StatelessWidget {
     final glassShape =
         shape ??
         RoundedSuperellipseBorder(
-          borderRadius: BorderRadius.circular(radius ?? 14),
+          borderRadius: BorderRadius.circular(radius ?? 22),
         );
     final glassCard = LiquidGlass(
       shape: glassShape,

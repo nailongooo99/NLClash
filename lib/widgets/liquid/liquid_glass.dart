@@ -137,10 +137,11 @@ class _LiquidGlassState extends State<LiquidGlass> {
     return BorderRadius.circular(24);
   }
 
-  List<double> _radii(Size size, double dpr) {
+  List<double> _radii(Size size) {
     final radius = _borderRadius;
-    final maxRadius = size.shortestSide / 2;
-    double clamp(double value) => math.min(value * dpr, maxRadius * dpr);
+    final minDim = size.shortestSide;
+    final maxRadius = minDim / 2;
+    double clamp(double value) => math.min(value, maxRadius) / minDim;
     return [
       clamp(radius.topLeft.x),
       clamp(radius.topRight.x),
@@ -149,21 +150,20 @@ class _LiquidGlassState extends State<LiquidGlass> {
     ];
   }
 
-  ui.ImageFilter? _buildFilter(Size size, double dpr) {
+  ui.ImageFilter? _buildFilter(Size size) {
     final shaderSupported =
         LiquidShaders.instance.supported && widget.lensHeight > 0;
     if (shaderSupported) {
       final shader = LiquidShaders.instance.createRefractionShader();
-      final radii = _radii(size, dpr);
-      shader.setFloat(0, size.width * dpr);
-      shader.setFloat(1, size.height * dpr);
+      final radii = _radii(size);
+      final minDim = size.shortestSide;
       shader.setFloat(2, 0);
       shader.setFloat(3, 0);
       for (var index = 0; index < 4; index++) {
         shader.setFloat(4 + index, radii[index]);
       }
-      shader.setFloat(8, widget.lensHeight * dpr);
-      shader.setFloat(9, widget.lensAmount * dpr);
+      shader.setFloat(8, widget.lensHeight / minDim);
+      shader.setFloat(9, widget.lensAmount / minDim);
       shader.setFloat(10, widget.depthEffect);
       shader.setFloat(11, widget.chromaticAberration ? 1 : 0);
       return ui.ImageFilter.shader(shader);
@@ -193,7 +193,7 @@ class _LiquidGlassState extends State<LiquidGlass> {
             if (!constraints.hasBoundedWidth || !constraints.hasBoundedHeight) {
               return widget.child;
             }
-            final filter = _buildFilter(size, dpr);
+            final filter = _buildFilter(size);
             Widget backdrop = ColoredBox(
               color: widget.tint.withValues(alpha: widget.tintOpacity),
             );

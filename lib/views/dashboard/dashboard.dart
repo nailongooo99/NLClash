@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'widgets/core_status_button.dart';
 import 'widgets/start_button.dart';
+import 'widgets/status_hero.dart';
 
 typedef _IsEditWidgetBuilder = Widget Function(bool isEdit);
 
@@ -198,38 +199,46 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         body: Align(
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16).copyWith(bottom: 88),
+            padding: const EdgeInsets.all(16).copyWith(bottom: 120),
             child: Align(
               alignment: Alignment.topCenter,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: _maxGridWidth),
-                child: LayoutBuilder(
-                  builder: (_, constraints) {
-                    final columns = min(
-                      max(4 * ((constraints.maxWidth / 280).ceil()), 8),
-                      _maxCrossAxisCount,
-                    );
-                    return isEdit
-                        ? BackLayerScope(
-                            onBack: _handleExitEdit,
-                            child: SuperGrid(
-                              key: key,
-                              crossAxisCount: columns,
-                              crossAxisSpacing: spacing,
-                              mainAxisSpacing: spacing,
-                              children: children,
-                              onUpdate: () {
-                                _handleSave();
-                              },
-                            ),
-                          )
-                        : Grid(
-                            crossAxisCount: columns,
-                            crossAxisSpacing: spacing,
-                            mainAxisSpacing: spacing,
-                            children: children,
-                          );
-                  },
+                child: Column(
+                  children: [
+                    if (!isEdit) ...[
+                      const StatusHero(),
+                      const SizedBox(height: 16),
+                    ],
+                    LayoutBuilder(
+                      builder: (_, constraints) {
+                        final columns = min(
+                          max(4 * ((constraints.maxWidth / 280).ceil()), 8),
+                          _maxCrossAxisCount,
+                        );
+                        return isEdit
+                            ? BackLayerScope(
+                                onBack: _handleExitEdit,
+                                child: SuperGrid(
+                                  key: key,
+                                  crossAxisCount: columns,
+                                  crossAxisSpacing: spacing,
+                                  mainAxisSpacing: spacing,
+                                  children: children,
+                                  onUpdate: () {
+                                    _handleSave();
+                                  },
+                                ),
+                              )
+                            : Grid(
+                                crossAxisCount: columns,
+                                crossAxisSpacing: spacing,
+                                mainAxisSpacing: spacing,
+                                children: children,
+                              );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
