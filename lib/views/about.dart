@@ -68,7 +68,7 @@ class AboutView extends StatelessWidget {
   List<Widget> _buildContributorsSection(AppLocalizations appLocalizations) {
     const contributors = [
       Contributor(
-        avatar: 'assets/images/avatar/june2.jpg',
+        avatar: 'assets/images/icon.png',
         name: 'FlClash (chen08209)',
         link: 'https://github.com/chen08209/FlClash',
       ),
