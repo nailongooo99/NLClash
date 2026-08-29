@@ -40,7 +40,7 @@ class HomePage extends ConsumerWidget {
               final currentIndex = state.currentIndex;
               final bottomNavigationBar = NavigationBarTheme(
                 data: _NavigationBarDefaultsM3(context),
-                child: NavigationBar(
+                child: LiquidGlassNavigationBar(
                   destinations: navigationItems
                       .map(
                         (e) => NavigationDestination(

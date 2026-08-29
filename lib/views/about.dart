@@ -48,13 +48,6 @@ class AboutView extends StatelessWidget {
           },
         ),
         ListItem(
-          title: const Text('Telegram'),
-          onTap: () {
-            globalState.openUrl('https://t.me/FlClash');
-          },
-          trailing: const Icon(Icons.launch),
-        ),
-        ListItem(
           title: Text(appLocalizations.project),
           onTap: () {
             globalState.openUrl('https://github.com/$repository');
@@ -64,9 +57,7 @@ class AboutView extends StatelessWidget {
         ListItem(
           title: Text(appLocalizations.core),
           onTap: () {
-            globalState.openUrl(
-              'https://github.com/chen08209/Clash.Meta/tree/FlClash',
-            );
+            globalState.openUrl('https://github.com/chen08209/Clash.Meta');
           },
           trailing: const Icon(Icons.launch),
         ),
@@ -76,6 +67,11 @@ class AboutView extends StatelessWidget {
 
   List<Widget> _buildContributorsSection(AppLocalizations appLocalizations) {
     const contributors = [
+      Contributor(
+        avatar: 'assets/images/avatar/june2.jpg',
+        name: 'FlClash (chen08209)',
+        link: 'https://github.com/chen08209/FlClash',
+      ),
       Contributor(
         avatar: 'assets/images/avatar/june2.jpg',
         name: 'June2',

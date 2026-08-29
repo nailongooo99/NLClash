@@ -12,6 +12,7 @@ import 'input.dart';
 import 'open_container.dart';
 import 'scaffold.dart';
 import 'sheet.dart';
+import 'liquid_glass.dart';
 
 sealed class _ListItemAction {
   const _ListItemAction();
@@ -454,7 +455,7 @@ class ListItem<T> extends StatelessWidget {
               : () {
                   toggleAction.onChanged!(!toggleAction.value);
                 },
-          trailing: Switch(
+          trailing: LiquidGlassToggle(
             value: toggleAction.value,
             onChanged: toggleAction.onChanged,
           ),
